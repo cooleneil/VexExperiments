@@ -1,3 +1,78 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// leftEncoder          encoder       E, F            
+// rightEncoder         encoder       G, H            
+// Controller1          controller                    
+// Drivetrain           drivetrain    1, 2            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// leftEncoder          encoder       C, D            
+// rightEncoder         encoder       G, H            
+// Controller1          controller                    
+// Drivetrain           drivetrain    1, 2            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// leftEncoder          encoder       C, D            
+// rightEncoder         encoder       E, F            
+// Controller1          controller                    
+// Drivetrain           drivetrain    1, 2            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// leftEncoder          encoder       C, D            
+// rightEncoder         encoder       E, F            
+// Controller1          controller                    
+// Drivetrain           drivetrain    1, 2            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// leftEncoder          encoder       C, D            
+// rightEncoder         encoder       E, F            
+// Controller1          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// leftEncoder          encoder       C, D            
+// rightEncoder         encoder       E, F            
+// Drivetrain           drivetrain    1, 2            
+// Controller1          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// leftEncoder          encoder       C, D            
+// rightEncoder         encoder       E, F            
+// Drivetrain           drivetrain    1, 2            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// leftEncoder          encoder       C, D            
+// rightEncoder         encoder       E, F            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// front_R              motor         1               
+// leftEncoder          encoder       C, D            
+// rightEncoder         encoder       E, F            
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// front_L              motor         2               
+// front_R              motor         1               
+// leftEncoder          encoder       C, D            
+// rightEncoder         encoder       E, F            
+// ---- END VEXCODE CONFIGURED DEVICES ----
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
@@ -204,16 +279,16 @@ void usercontrol(void) {
     // ........................................................................
 
     // joyStickControl();
-    double first_val = Controller1.Axis3.position();
-    double second_val = Controller1.Axis2.position();
-    double leftmotorpower = pow(first_val, 3) / 10000;
+    // double first_val = Controller1.Axis3.position();
+    // double second_val = Controller1.Axis2.position();
+    // double leftmotorpower = pow(first_val, 3) / 10000;
 
-    double rightmotorpower = pow(second_val, 3) / 10000;
-    if (abs(Controller1.Axis3.position()) > 10 |
-        abs(Controller1.Axis2.position()) > 10) {
+    // double rightmotorpower = pow(second_val, 3) / 10000;
+    // if (abs(Controller1.Axis3.position()) > 10 |
+    //     abs(Controller1.Axis2.position()) > 10) {
 
-      front_L.spin(fwd, leftmotorpower, pct);
-      front_R.spin(fwd, -rightmotorpower, pct);
+    //   front_L.spin(fwd, leftmotorpower, pct);
+    //   front_R.spin(fwd, -rightmotorpower, pct);
       //       while (true) {
       //         float ydisL = 3;//encoder values
       //         float ydisR = 3;//encoder values
@@ -243,28 +318,52 @@ void usercontrol(void) {
       // X_Position = X_Position + xPos;
       // Y_Position = Y_Position + yPos;
 
-      float L = leftEncoder.position(degrees);
-      float R = rightEncoder.position(degrees);
-      float LDis = L * (2.75 * 3.1415);
-      float RDis = R * (2.75 * 3.1415);
-      float xPos = 0;
+
+
+float L= 0;
+  float xPos = 0;
       float yPos = 0;
       float X = 0;
       float Y = 0;
+      float R = 0;
+      float LDis = 0; 
+      float RDis = 0;
+      float CDis = 0;
       float headingAngle = 0;
-      while (true) {
+      float headingAngleDelta = 0;
+
+while (true) {
+       L = leftEncoder.position(degrees);
+       R = rightEncoder.position(degrees);
+      LDis = (L /360)* (4 * 3.1415);
+      RDis = (R/360) * (4 * 3.1415);
+      
+      
         // rotation
-        headingAngle = L - R;
+        headingAngleDelta = (RDis -LDis)/7;
+        CDis = (RDis + LDis)/2;
+
         // position
-        xPos = (double(cos(headingAngle))) * (LDis + RDis) / 2;
-        yPos = (double(sin(headingAngle))) * xPos;
+        yPos = (double(cos(headingAngleDelta))) * CDis;
+        xPos = -(double(sin(headingAngleDelta))) * CDis;
         X = X + xPos;
         Y = Y + yPos;
+        headingAngle = headingAngle + headingAngleDelta;
+         // Brain.Screen.print("");
+          Brain.Screen.clearScreen();
+          Brain.Screen.setCursor(3,3);
+  Brain.Screen.print(X);
+    Brain.Screen.setCursor(7,3);
+   Brain.Screen.print(Y);
+   Brain.Screen.setCursor(12,3);
+   Brain.Screen.print(headingAngleDelta);
+    
         wait(3, msec);
       } 
     }
   }
-}
+
+
   // printf("leftmotor: %lf/n", leftmotorpower);
   // printf("rightmotor: %lf/n", rightmotorpower); // prevent wasted resources.
   // else {
