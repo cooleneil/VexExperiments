@@ -320,44 +320,68 @@ void usercontrol(void) {
 
 
 
-float L= 0;
-  float xPos = 0;
-      float yPos = 0;
-      float X = 0;
-      float Y = 0;
-      float R = 0;
-      float LDis = 0; 
-      float RDis = 0;
-      float CDis = 0;
-      float headingAngle = 0;
-      float headingAngleDelta = 0;
+double L= 0;
+  double xPos = 0.00;
+      double yPos = 0.00;
+      double XCord = 0.00;
+      double YCord = 0.00;
+      double R = 0;
+      double LDis = 0; 
+      double RDis = 0;
+      double CDis = 0;
+      double headingAngle = 0;
+      double headingAngleDelta = 0;
+      double deltaL;
+      double deltaR;
 
 while (true) {
-       L = leftEncoder.position(degrees);
-       R = rightEncoder.position(degrees);
-      LDis = (L /360)* (4 * 3.1415);
-      RDis = (R/360) * (4 * 3.1415);
+       double currentL = leftEncoder.position(degrees);
+       double currentR = rightEncoder.position(degrees);
+       deltaL = currentL - L;
+       deltaR = currentR - R;
+       L = currentL;
+       R = currentR;
+
+      LDis = (deltaL/360)* (4 * 3.1415);
+      RDis = (deltaR/360) * (4 * 3.1415);
       
       
         // rotation
-        headingAngleDelta = (RDis -LDis)/7;
+        headingAngleDelta = (RDis - LDis)/7;
         CDis = (RDis + LDis)/2;
 
         // position
-        yPos = (double(cos(headingAngleDelta))) * CDis;
-        xPos = -(double(sin(headingAngleDelta))) * CDis;
-        X = X + xPos;
-        Y = Y + yPos;
+        if(headingAngleDelta != 90){
+        yPos = double((cos(headingAngleDelta))) * CDis;
+        }
+        if(headingAngleDelta != 0){
+          xPos = double((sin(headingAngleDelta))) * CDis;
+        }`
+
+        XCord = XCord + xPos;//X + xPos;
+        YCord = YCord + yPos;
+        
         headingAngle = headingAngle + headingAngleDelta;
+        //reset delta
+        xPos = 0;
+        yPos = 0;
+        headingAngleDelta = 0;
          // Brain.Screen.print("");
           Brain.Screen.clearScreen();
           Brain.Screen.setCursor(3,3);
-  Brain.Screen.print(X);
-    Brain.Screen.setCursor(7,3);
-   Brain.Screen.print(Y);
-   Brain.Screen.setCursor(12,3);
-   Brain.Screen.print(headingAngleDelta);
-    
+  Brain.Screen.print(XCord);
+    Brain.Screen.setCursor(3,20);
+   Brain.Screen.print(xPos);
+   Brain.Screen.setCursor(5,3);
+   Brain.Screen.print(YCord);
+    Brain.Screen.setCursor(5,20);
+   Brain.Screen.print(yPos);
+   Brain.Screen.setCursor(7,3);
+   Brain.Screen.print(L);
+   Brain.Screen.setCursor(7,20);
+   Brain.Screen.print(R);
+   Brain.Screen.setCursor(9,3);
+   Brain.Screen.print(CDis);
         wait(3, msec);
       } 
     }
