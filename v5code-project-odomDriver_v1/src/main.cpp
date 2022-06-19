@@ -352,20 +352,21 @@ while (true) {
 
         // position
         if(headingAngleDelta != 90){
-        yPos = double((cos(headingAngleDelta))) * CDis;
+        yPos = double((cos(headingAngle))) * CDis;
         }
-        if(headingAngleDelta != 0){
-          xPos = double((sin(headingAngleDelta))) * CDis;
-        }`
+        else {
+         // yPos = 3.00;
+        }
+          xPos = -double((sin(headingAngle))) * CDis;
+        
+        
+         // xPos = 2.00;
+        
 
         XCord = XCord + xPos;//X + xPos;
         YCord = YCord + yPos;
         
         headingAngle = headingAngle + headingAngleDelta;
-        //reset delta
-        xPos = 0;
-        yPos = 0;
-        headingAngleDelta = 0;
          // Brain.Screen.print("");
           Brain.Screen.clearScreen();
           Brain.Screen.setCursor(3,3);
@@ -381,8 +382,14 @@ while (true) {
    Brain.Screen.setCursor(7,20);
    Brain.Screen.print(R);
    Brain.Screen.setCursor(9,3);
-   Brain.Screen.print(CDis);
-        wait(3, msec);
+   Brain.Screen.print(headingAngle);
+           //reset delta
+        xPos = 0;
+        yPos = 0;
+
+         headingAngleDelta = 0;
+
+        wait(50, msec);
       } 
     }
   }
@@ -413,6 +420,6 @@ while (true) {
 
     // Prevent main from exiting with an infinite loop.
     while (true) {
-      wait(100, msec);
+      wait(1, msec);
     }
   }
