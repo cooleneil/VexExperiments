@@ -32,18 +32,16 @@ void pre_auton(void){
   vexcodeInit();
 }
   void usercontrol(void){
+    // variable declarations that dont need to be updated in the while loop
   double wheelRadius = 2;
         double Ss = 6.25;
         double Sl = 3.5;
         double Sr = 3.5;
         double X = 0.00;
         double Y = 0.00;
-      //  double currentX = 0.00;
-      //  double currentY = 0.00;
         double Theta = 0;
         double Dx = 0.00;
         double Dy = 0.00;
-        
         double DTx = 0.00;
         double DTy = 0.00;
         double DTheta = 0.00;
@@ -60,14 +58,16 @@ void pre_auton(void){
         double deltaRightEncoderValue = 0.00;
         double deltaBackEncoderValue = 0.00;
         double ThetaM = 0.00;
-        double ThetaR = 0;
+       
 
 
             while (true)
             {
+              //updates the encoder variables from the encoders. updates the position of the encoder after the wait
                 leftEncoderValue = leftEncoder.position(degrees);
                 rightEncoderValue = rightEncoder.position(degrees);
                 backEncoderValue = backEncoder.position(degrees);
+                //calculating the deltas of the raw encoder values
                 deltaLeftEncoderValue =  leftEncoderValue - currentLeftEncoderValue;//leftEncoderValue++ represnts value coming from encoder
                 currentLeftEncoderValue = currentLeftEncoderValue + deltaLeftEncoderValue;
 
@@ -76,11 +76,11 @@ void pre_auton(void){
 
                 deltaBackEncoderValue = backEncoderValue - currentBackEncoderValue;
                 currentBackEncoderValue = currentBackEncoderValue + deltaBackEncoderValue;
-
+//making the degrees into radians and multiplying it by the radius
                 Dl = ((deltaLeftEncoderValue * 3.1415) / 180) * wheelRadius;
                 Dr = ((deltaRightEncoderValue * 3.1415) / 180) * wheelRadius;
                 Ds = ((deltaBackEncoderValue * 3.1415) / 180) * wheelRadius;
-
+// calculating delta theta
                 DTheta = (Dl - Dr) / (Sl + Sr);
 
                 
@@ -93,6 +93,7 @@ void pre_auton(void){
                 }
                 else
                 {
+                  //change x anf y cordinates to match rotation(x and y change if angle is 45 degrees)
                    Dx =  ((2 *sin(DTheta/2))) * ((Ds / DTheta) + Ss);
                     Dy = ((2 *sin(DTheta/2))) * ((Dr / DTheta) + Sr);
                      
@@ -109,6 +110,7 @@ void pre_auton(void){
                     X = X + DTx;
                     Y = Y + DTy;
                     Theta = Theta + DTheta;
+                    //print values on brain display
             Brain.Screen.clearScreen();
             Brain.Screen.setCursor(3,3);
     Brain.Screen.print(X);
@@ -127,7 +129,7 @@ void pre_auton(void){
             //reset delta
        
 
-
+// waiting 50 msec for the encoders to move and rotate again
           wait(50, msec);
       
      
