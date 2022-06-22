@@ -1,10 +1,11 @@
+
 using namespace vex;
 
 extern brain Brain;
 
 // VEXcode devices
-extern motor Left;
-extern motor Right;
+extern motor front_l;
+extern motor front_r;
 extern controller Controller1;
 extern encoder leftEncoder;
 extern encoder rightEncoder;

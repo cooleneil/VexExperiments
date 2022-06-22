@@ -23,8 +23,6 @@ competition Competition;
 // backEncoder          encoder       C, D
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
-#include "vex.h"
-
 using namespace vex;
 
 // absolute x cordinate of the robot
@@ -140,58 +138,80 @@ void usercontrol(void) {
     wait(50, msec);
   }
 }
+void Point2Point(void) {
+  printf("function is running\n");
+  double finalX = 20;
+  double finalY = 20;
+  double xDisTraveled = finalX - X;
+  double yDisTraveled = finalY - Y;
+  double DistanceToFinalPoint =  (sqrt((pow(xDisTraveled, 2)) + (pow(yDisTraveled, 2))));
+  printf("%f\n", DistanceToFinalPoint);
+  double angleNeeded = (acos(xDisTraveled / DistanceToFinalPoint));
+  double LeftValue = 0;
+  double RightValue = 0;
+  double LeftDistance = 0;
+  double RightDistance = 0;
+  double lastRightEncoder = 0;
+  double lastLeftEncoder = 0;
+  double deltaLeft = 0;
+  double deltaRight = 0;  
+  printf("%f\n", angleNeeded);
+  while ((angleNeeded - Theta) >= 0.01) {
+
+    if (angleNeeded < Theta) {
+front_l.setVelocity(10, pct);
+front_r.setVelocity(10, pct);
+      front_l.spin(fwd);
+      front_r.spin(fwd);
+    } else {
+      front_l.setVelocity(10, pct);
+      front_r.setVelocity(10, pct);
+      front_l.spin(reverse);
+      front_r.spin(fwd);
+    }
+  }
+
+  while ((DistanceToFinalPoint - (LeftDistance + RightDistance) / 2) > 1) {
+LeftValue = leftEncoder.position(degrees);
+RightValue = rightEncoder.position(degrees);
+
+ deltaLeft = lastLeftEncoder - LeftValue;
+    deltaRight = lastRightEncoder - RightValue;
+    LeftDistance = LeftDistance +((  deltaLeft* 3.1415) / 180 * wheelRadius);
+    RightDistance = RightDistance + ((deltaRight* 3.1415) / 180 * wheelRadius);
+    lastLeftEncoder = LeftValue;
+    lastRightEncoder = RightValue;
+    
+    if ((DistanceToFinalPoint - (LeftDistance + RightDistance) / 2) < 1.5) {
+      front_l.setVelocity(5, pct);
+      front_r.setVelocity(5, pct);
+      front_l.spin(fwd);
+      front_r.spin(fwd);
+      printf("if loop working\n");
+    } else {
+      front_l.setVelocity(10, pct);
+      front_r.setVelocity(10, pct);
+      front_l.spin(fwd);
+      front_r.spin(fwd);
+      printf("else loop working\n");
+    }
+  }
+  front_l.stop(hold);
+  front_r.stop(hold);
+}
 
 int main() {
-  // Set up callbacks for autonomous and driver control periods.
-
-  Competition.drivercontrol(usercontrol);
-
   // Run the pre-autonomous function.
   pre_auton();
+
+  // Set up callbacks for autonomous and driver control periods.
+  Point2Point();
+
+  Competition.drivercontrol(usercontrol);
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
     wait(100, msec);
-  }
-}
-void Point2Point(double finalX, double finalY) {
-  if (Controller1.ButtonLeft.pressing()) {
-    double xDisTraveled = finalX - X;
-    double yDisTraveled = finalY - Y;
-    double DistanceToFinalPoint =
-        (sqrt((pow(xDisTraveled, 2)) + (pow(yDisTraveled, 2))));
-    double angleNeeded = (acos(xDisTraveled / DistanceToFinalPoint));
-    double LeftValue = 0;
-    double RightValue = 0;
-    while (true) {
-      double LeftValue = leftEncoder.position(degrees);
-      double RightValue = rightEncoder.position(degrees);
-      LeftValue = (LeftValue * 3.1415) / 180 * wheelRadius;
-      RightValue = (RightValue * 3.1415) / 180 * wheelRadius;
-      wait(50, msec);
-    }
-    while (angleNeeded - Theta >= 1) {
-      if (angleNeeded < Theta) {
-        Left.spin(fwd);
-        Right.spin(reverse);
-      } else {
-        Left.spin(reverse);
-        Right.spin(fwd);
-      }
-    }
-    while ((DistanceToFinalPoint - (LeftValue + RightValue) / 2) > 1) {
-      if ((DistanceToFinalPoint - (LeftValue + RightValue) / 2) < 1.5) {
-        Left.setVelocity(100, pct);
-        Right.setVelocity(100, pct);
-        Left.spin(fwd);
-        Right.spin(fwd);
-      } else {
-        Left.setVelocity(100, pct);
-        Right.setVelocity(100, pct);
-        Left.spin(fwd);
-        Right.spin(fwd);
-      }
-    }
   }
 }
 
@@ -204,7 +224,7 @@ void joyStickControl(void) {
   if (abs(Controller1.Axis3.position()) > 10 |
       abs(Controller1.Axis2.position()) > 10) {
 
-    Left.spin(fwd, leftmotorpower, pct);
-    Right.spin(fwd, -rightmotorpower, pct);
+    front_l.spin(fwd, leftmotorpower, pct);
+    front_r.spin(fwd, -rightmotorpower, pct);
   }
 }

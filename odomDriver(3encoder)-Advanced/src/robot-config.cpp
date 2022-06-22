@@ -8,9 +8,8 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-motor LeftDriveSmart = motor(PORT1, ratio18_1, false);
-motor RightDriveSmart = motor(PORT2, ratio18_1, true);
-drivetrain Drivetrain = drivetrain(LeftDriveSmart, RightDriveSmart, 319.19, 295, 40, mm, 1);
+motor  front_l= motor(PORT3, ratio18_1, false);
+motor  front_r= motor(PORT2, ratio18_1, true);
 controller Controller1 = controller(primary);
 encoder leftEncoder = encoder(Brain.ThreeWirePort.E);
 encoder rightEncoder = encoder(Brain.ThreeWirePort.G);
@@ -40,7 +39,7 @@ int rc_auto_loop_function_Controller1() {
         // check if the left motor has already been stopped
         if (DrivetrainLNeedsToBeStopped_Controller1) {
           // stop the left drive motor
-          LeftDriveSmart.stop();
+          front_l.stop();
           // tell the code that the left motor has been stopped
           DrivetrainLNeedsToBeStopped_Controller1 = false;
         }
@@ -53,7 +52,7 @@ int rc_auto_loop_function_Controller1() {
         // check if the right motor has already been stopped
         if (DrivetrainRNeedsToBeStopped_Controller1) {
           // stop the right drive motor
-          RightDriveSmart.stop();
+          front_r.stop();
           // tell the code that the right motor has been stopped
           DrivetrainRNeedsToBeStopped_Controller1 = false;
         }
@@ -64,13 +63,13 @@ int rc_auto_loop_function_Controller1() {
       
       // only tell the left drive motor to spin if the values are not in the deadband range
       if (DrivetrainLNeedsToBeStopped_Controller1) {
-        LeftDriveSmart.setVelocity(drivetrainLeftSideSpeed, percent);
-        LeftDriveSmart.spin(forward);
+        front_l.setVelocity(drivetrainLeftSideSpeed, percent);
+        front_l.spin(forward);
       }
       // only tell the right drive motor to spin if the values are not in the deadband range
       if (DrivetrainRNeedsToBeStopped_Controller1) {
-        RightDriveSmart.setVelocity(drivetrainRightSideSpeed, percent);
-        RightDriveSmart.spin(forward);
+        front_r.setVelocity(drivetrainRightSideSpeed, percent);
+        front_r.spin(forward);
       }
     }
     // wait before repeating the process
