@@ -26,20 +26,26 @@ competition Competition;
 #include "vex.h"
 
 using namespace vex;
-
+// absolute x cordinate of the robot
+double X = 0.00;
+//absolute y cordinate of the robot
+double Y = 0.00;
+//ablsoute heading of the robot
+double Theta = 0;
+double wheelRadius = 2;
+        double Ss = 6.25;
+        double Sl = 3.5;
+        double Sr = 3.5;
 void pre_auton(void){
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
 }
+
   void usercontrol(void){
     // variable declarations that dont need to be updated in the while loop
-  double wheelRadius = 2;
-        double Ss = 6.25;
-        double Sl = 3.5;
-        double Sr = 3.5;
-        double X = 0.00;
-        double Y = 0.00;
-        double Theta = 0;
+  
+        
+        
         double Dx = 0.00;
         double Dy = 0.00;
         double DTx = 0.00;
@@ -58,11 +64,13 @@ void pre_auton(void){
         double deltaRightEncoderValue = 0.00;
         double deltaBackEncoderValue = 0.00;
         double ThetaM = 0.00;
-       
+        double avgLinearDistance = 0;
+        
 
 
             while (true)
             {
+               
               //updates the encoder variables from the encoders. updates the position of the encoder after the wait
                 leftEncoderValue = leftEncoder.position(degrees);
                 rightEncoderValue = rightEncoder.position(degrees);
@@ -83,7 +91,7 @@ void pre_auton(void){
 // calculating delta theta
                 DTheta = (Dl - Dr) / (Sl + Sr);
 
-                
+                avgLinearDistance = (Dr + Dl)/2;
                 if (DTheta == 0)
                 {
                     //moving without turn
@@ -111,6 +119,7 @@ void pre_auton(void){
                     Y = Y + DTy;
                     Theta = Theta + DTheta;
                     //print values on brain display
+                   
             Brain.Screen.clearScreen();
             Brain.Screen.setCursor(3,3);
     Brain.Screen.print(X);
@@ -134,6 +143,7 @@ void pre_auton(void){
       
      
             } 
+            
   }
    
    int main() {
@@ -150,3 +160,46 @@ void pre_auton(void){
     }
    
    }
+ void Point2Point(double finalX, double finalY){
+   
+                double xDisTraveled = finalX-X;
+                double yDisTraveled = finalY-Y;
+                double DistanceToFinalPoint = (sqrt((pow(xDisTraveled,2))+ (pow(yDisTraveled,2))));
+                double angleNeeded = (acos(xDisTraveled/DistanceToFinalPoint)); 
+                double LeftValue =0;
+                double RightValue = 0; 
+                while(true){
+   double LeftValue = leftEncoder.position(degrees);
+   double RightValue = rightEncoder.position(degrees);
+   LeftValue = (LeftValue* 3.1415) / 180 * wheelRadius;
+   RightValue = (RightValue* 3.1415) / 180 * wheelRadius;
+   wait(50,msec);
+   }
+                  while(angleNeeded-Theta>=1){
+                    if(angleNeeded<Theta){
+                     LeftMotor.spin(fwd);
+                     RightMotor.spin(reverse); 
+                    }
+                    else
+                    {
+                      LeftMotor.spin(reverse);
+                     RightMotor.spin(fwd); 
+                    }
+                  }
+while((DistanceToFinalPoint-(LeftValue+RightValue)/2)>1 ){
+if((DistanceToFinalPoint-(LeftValue+RightValue)/2) <1.5){
+Velocity(60, pct);
+LeftMotor.spin(fwd);
+RightMotor.spin(fwd);
+}
+else 
+{
+  Velocity(100, pct);
+  LeftMotor.spin(fwd);
+RightMotor.spin(fwd);
+}
+}
+                  }
+
+                  
+                                  
