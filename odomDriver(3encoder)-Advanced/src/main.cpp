@@ -135,12 +135,12 @@ void usercontrol(void) {
     // reset delta
 
     // waiting 50 msec for the encoders to move and rotate again
-    wait(50, msec);
+    wait(20, msec);
   }
 }
 void Point2Point(void) {
   printf("function is running\n");
-  double finalX = 20;
+  double finalX = 40;
   double finalY = 20;
   double xDisTraveled = finalX - X;
   double yDisTraveled = finalY - Y;
@@ -156,19 +156,23 @@ void Point2Point(void) {
   double deltaLeft = 0;
   double deltaRight = 0;  
   printf("%f\n", angleNeeded);
-  while ((angleNeeded - Theta) >= 0.01) {
+  int motorPower = 20;
+  while ((angleNeeded - Theta) > 0.05 || (angleNeeded - Theta) < - 0.05 ) {
 
     if (angleNeeded < Theta) {
-front_l.setVelocity(10, pct);
-front_r.setVelocity(10, pct);
-      front_l.spin(fwd);
-      front_r.spin(fwd);
+front_l.setVelocity(motorPower, pct);
+front_r.setVelocity(motorPower, pct);
+     front_l.spin(fwd);
+      front_r.spin(reverse);
     } else {
-      front_l.setVelocity(10, pct);
-      front_r.setVelocity(10, pct);
+      front_l.setVelocity(motorPower, pct);
+      front_r.setVelocity(motorPower, pct);
       front_l.spin(reverse);
       front_r.spin(fwd);
     }
+    //wait(10, msec);
+    //printf("%f\n", Theta);
+
   }
 
   while ((DistanceToFinalPoint - (LeftDistance + RightDistance) / 2) > 1) {
@@ -183,14 +187,14 @@ RightValue = rightEncoder.position(degrees);
     lastRightEncoder = RightValue;
     
     if ((DistanceToFinalPoint - (LeftDistance + RightDistance) / 2) < 1.5) {
-      front_l.setVelocity(5, pct);
-      front_r.setVelocity(5, pct);
+      front_l.setVelocity(motorPower/2, pct);
+      front_r.setVelocity(motorPower/2, pct);
       front_l.spin(fwd);
       front_r.spin(fwd);
       printf("if loop working\n");
     } else {
-      front_l.setVelocity(10, pct);
-      front_r.setVelocity(10, pct);
+      front_l.setVelocity(motorPower, pct);
+      front_r.setVelocity(motorPower, pct);
       front_l.spin(fwd);
       front_r.spin(fwd);
       printf("else loop working\n");
