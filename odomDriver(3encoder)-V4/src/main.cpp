@@ -34,7 +34,7 @@ double Theta = 0;
 double wheelRadius = 2;
 double Ss = 3.59;
 double Sl = 3.59;
-double Sr = 3.59;
+double Sr = 7;
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -76,18 +76,14 @@ void usercontrol(void) {
         leftEncoderValue -
         currentLeftEncoderValue; // leftEncoderValue++ represnts value coming
                                  // from encoder
-    currentLeftEncoderValue = currentLeftEncoderValue + deltaLeftEncoderValue;
-
+    
     deltaRightEncoderValue = rightEncoderValue - currentRightEncoderValue;
-    currentRightEncoderValue =
-        currentRightEncoderValue + deltaRightEncoderValue;
 
     deltaBackEncoderValue = backEncoderValue - currentBackEncoderValue;
      printf("printing backEncoderValue");
     printf("%f\n", backEncoderValue);
      printf("printing currentBackEncoderValue");
     printf("%f\n", currentBackEncoderValue);
-    currentBackEncoderValue = currentBackEncoderValue + deltaBackEncoderValue;
     // making the degrees into radians and multiplying it by the radius
     Dl = ((deltaLeftEncoderValue * 3.1415) / 180) * wheelRadius;
     Dr = ((deltaRightEncoderValue * 3.1415) / 180) * wheelRadius;
@@ -117,8 +113,8 @@ printf("printing Dx");
 printf("printing ThetaM");
     printf("%f\n", ThetaM);
     // Rotate the coordinates by -thetaM
-    DTx = Dx * ((cos(-ThetaM))) - Dy * ((sin(-ThetaM)));
-    DTy = Dx * ((sin(-ThetaM))) - Dy * ((cos(-ThetaM)));
+    DTx = -Dx * ((cos(ThetaM))) + Dy * ((sin(ThetaM)));
+    DTy = Dx * ((sin(ThetaM))) + Dy * ((cos(ThetaM)));
 printf("printing DTx");
     printf("%f\n", DTx);
     // update absolute values
@@ -148,6 +144,10 @@ printf("printing DTx");
     // reset delta
 
     // waiting 50 msec for the encoders to move and rotate again
+    currentLeftEncoderValue = leftEncoder.position(degrees);
+    currentRightEncoderValue = rightEncoder.position(degrees);
+    currentBackEncoderValue = backEncoder.position(degrees);
+
     wait(20, msec);
   }
 }
