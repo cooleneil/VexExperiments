@@ -32,9 +32,9 @@ double Y = 0.00;
 // ablsoute heading of the robot
 double Theta = 0;
 double wheelRadius = 2;
-double Ss = 3.59;
+double Ss = 7;
 double Sl = 3.59;
-double Sr = 7;
+double Sr = 3.59;
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -43,15 +43,16 @@ void pre_auton(void) {
 
 void usercontrol(void) {
   // variable declarations that dont need to be updated in the while loop
-
+  //reset all variables
   double Dx = 0.00;
   double Dy = 0.00;
   double DTx = 0.00;
   double DTy = 0.00;
   double DTheta = 0.00;
-  double leftEncoderValue = leftEncoder.position(degrees);
-  double rightEncoderValue = rightEncoder.position(degrees);
-  double backEncoderValue = backEncoder.position(degrees);
+  
+  double leftEncoderValue = 0;
+  double rightEncoderValue = 0;
+  double backEncoderValue = 0;
   double Dl = 0.00;
   double Dr = 0.00;
   double Ds = 0.00;
@@ -63,6 +64,8 @@ void usercontrol(void) {
   double deltaBackEncoderValue = 0.00;
   double ThetaM = 0.00;
   double avgLinearDistance = 0;
+
+
 
   while (true) {
 
@@ -154,7 +157,7 @@ printf("printing DTx");
 void Point2Point(void) {
   printf("function is running\n");
   //variable declarations
-  double finalX = 40;
+  double finalX = 20;
   double finalY = 20;
   double xDisTraveled = finalX - X;
   double yDisTraveled = finalY - Y;
@@ -223,11 +226,12 @@ RightValue = rightEncoder.position(degrees);
 int main() {
   // Run the pre-autonomous function.
   pre_auton();
+    Competition.drivercontrol(usercontrol);
 
+Point2Point();
   // Set up callbacks for autonomous and driver control periods.
   //Point2Point();
 
-  Competition.drivercontrol(usercontrol);
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
