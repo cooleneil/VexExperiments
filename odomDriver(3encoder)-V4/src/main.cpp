@@ -32,9 +32,9 @@ double Y = 0.00;
 // ablsoute heading of the robot
 double Theta = 0;
 double wheelRadius = 2;
-double Ss = 7;
-double Sl = 3.59;
-double Sr = 3.59;
+double Ss = 4.5;
+double Sl = 3.5;
+double Sr = 3.5;
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -49,7 +49,7 @@ void usercontrol(void) {
   double DTx = 0.00;
   double DTy = 0.00;
   double DTheta = 0.00;
-  
+  double EncoderCorrectionFactor = 0.8970;
   double leftEncoderValue = 0;
   double rightEncoderValue = 0;
   double backEncoderValue = 0;
@@ -88,13 +88,13 @@ void usercontrol(void) {
      printf("printing currentBackEncoderValue");
     printf("%f\n", currentBackEncoderValue);
     // making the degrees into radians and multiplying it by the radius
-    Dl = ((deltaLeftEncoderValue * 3.1415) / 180) * wheelRadius;
-    Dr = ((deltaRightEncoderValue * 3.1415) / 180) * wheelRadius;
-    Ds = ((deltaBackEncoderValue * 3.1415) / 180) * wheelRadius;
+    Dl = (((deltaLeftEncoderValue * 3.14159265) / 180) * wheelRadius)*EncoderCorrectionFactor;
+    Dr = (((deltaRightEncoderValue * 3.14159265) / 180) * wheelRadius)*EncoderCorrectionFactor;
+    Ds = ((deltaBackEncoderValue * 3.14159265) / 180) * wheelRadius;
     printf("printing Ds");
     printf("%f\n", Ds);
     // calculating delta theta
-    DTheta = (Dl - Dr) / (Sl + Sr);
+    DTheta = ((Dl - Dr) / (Sl + Sr));
 
     avgLinearDistance = (Dr + Dl) / 2;
     if (DTheta == 0) {
@@ -173,6 +173,7 @@ void Point2Point(void) {
   double lastLeftEncoder = 0;
   double deltaLeft = 0;
   double deltaRight = 0;  
+  
   printf("%f\n", angleNeeded);
   int motorPower = 20;
 //doing the turn move command
@@ -228,7 +229,7 @@ int main() {
   pre_auton();
     Competition.drivercontrol(usercontrol);
 
-Point2Point();
+//Point2Point();
   // Set up callbacks for autonomous and driver control periods.
   //Point2Point();
 
