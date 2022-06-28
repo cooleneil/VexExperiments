@@ -147,6 +147,7 @@ while (true) {
          // yPos = 3.00;
         }
           xPos = -double((sin(headingAngle))) * CDis;
+          yPos = -double((cos(headingAngle))) * CDis;
         
         
          // xPos = 2.00;
@@ -161,9 +162,9 @@ while (true) {
           Brain.Screen.setCursor(3,3);
   Brain.Screen.print(XCord);
     Brain.Screen.setCursor(3,20);
-   Brain.Screen.print(xPos);
-   Brain.Screen.setCursor(5,3);
    Brain.Screen.print(YCord);
+   Brain.Screen.setCursor(5,3);
+   Brain.Screen.print(xPos);
     Brain.Screen.setCursor(5,20);
    Brain.Screen.print(yPos);
    Brain.Screen.setCursor(7,3);

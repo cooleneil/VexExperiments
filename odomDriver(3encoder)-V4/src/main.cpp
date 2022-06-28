@@ -41,10 +41,8 @@ void pre_auton(void) {
   vexcodeInit();
 }
 
-void usercontrol(void) {
-  // variable declarations that dont need to be updated in the while loop
-  //reset all variables
-  double Dx = 0.00;
+void usercontrol(void) {}
+ double Dx = 0.00;
   double Dy = 0.00;
   double DTx = 0.00;
   double DTy = 0.00;
@@ -64,6 +62,14 @@ void usercontrol(void) {
   double deltaBackEncoderValue = 0.00;
   double ThetaM = 0.00;
   double avgLinearDistance = 0;
+  double testcurrentL = 0;
+      double testcurrentR = 0;
+      double testcurrentback = 0;
+void ThreeEncdoerOdom(void){
+  // variable declarations that dont need to be updated in the while loop
+  //reset all variables
+  
+ 
 
 
 
@@ -74,10 +80,12 @@ void usercontrol(void) {
     leftEncoderValue = leftEncoder.position(degrees);
     rightEncoderValue = rightEncoder.position(degrees);
     backEncoderValue = backEncoder.position(degrees);
+    testcurrentL = leftEncoder.position(degrees);
+    testcurrentR = rightEncoder.position(degrees);
+    testcurrentback = backEncoder.position(degrees);
     // calculating the deltas of the raw encoder values
     deltaLeftEncoderValue =
-        leftEncoderValue -
-        currentLeftEncoderValue; // leftEncoderValue++ represnts value coming
+        leftEncoderValue -   currentLeftEncoderValue; // leftEncoderValue++ represnts value coming
                                  // from encoder
     
     deltaRightEncoderValue = rightEncoderValue - currentRightEncoderValue;
@@ -144,16 +152,123 @@ printf("printing DTx");
     Brain.Screen.print(backEncoderValue);
     Brain.Screen.setCursor(9, 3);
     Brain.Screen.print(leftEncoderValue);
+  
     // reset delta
 
     // waiting 50 msec for the encoders to move and rotate again
     currentLeftEncoderValue = leftEncoder.position(degrees);
     currentRightEncoderValue = rightEncoder.position(degrees);
     currentBackEncoderValue = backEncoder.position(degrees);
-
+ if(testcurrentL==360){
+          testcurrentL = 0;
+        }
+        if(testcurrentL>360){
+          testcurrentL = testcurrentL-360;
+        }
+         if(testcurrentR==360){
+          testcurrentR = 0;
+        }
+        if(testcurrentR>360){
+          testcurrentR =  testcurrentR-360;
+        }
+         if(testcurrentback==360){
+          testcurrentback = 0;
+        }
+        if(testcurrentback>360){
+          testcurrentback =  testcurrentback-360;
+        }
     wait(20, msec);
   }
 }
+ void TwoEncoderOdom(void){
+double L= 0;
+  double xPos = 0.00;
+      double yPos = 0.00;
+      double XCord = 0.00;
+      double YCord = 0.00;
+      double R = 0;
+      double LDis = 0; 
+      double RDis = 0;
+      double CDis = 0;
+      double headingAngle = 0;
+      double headingAngleDelta = 0;
+      double deltaL;
+      double deltaR;
+      double currentL = 0;
+      double currentR = 0;
+      
+while (true) {
+        currentL = leftEncoder.position(degrees);
+       currentR = rightEncoder.position(degrees);
+       testcurrentL = leftEncoder.position(degrees);
+       testcurrentR = rightEncoder.position(degrees);
+       deltaL = currentL - L;
+       deltaR = currentR - R;
+       L = currentL;
+       R = currentR;
+
+      LDis = (deltaL/360)* (4 * 3.1415);
+      RDis = (deltaR/360) * (4 * 3.1415);
+      
+      
+        // rotation
+        headingAngleDelta = (RDis - LDis)/7;
+        CDis = (RDis + LDis)/2;
+
+        // position
+        if(headingAngleDelta != 90){
+          
+        }
+        else {
+         // yPos = 3.00;
+        }
+          xPos = -double((sin(headingAngle))) * CDis;
+          yPos = -double((cos(headingAngle))) * CDis;
+        
+        
+         // xPos = 2.00;
+        
+
+        XCord = XCord + xPos;//X + xPos;
+        YCord = YCord + yPos;
+        
+        headingAngle = headingAngle + headingAngleDelta;
+         // Brain.Screen.print("");
+          Brain.Screen.clearScreen();
+          Brain.Screen.setCursor(3,3);
+  Brain.Screen.print(XCord);
+    Brain.Screen.setCursor(3,20);
+   Brain.Screen.print(YCord);
+   Brain.Screen.setCursor(5,3);
+   Brain.Screen.print(xPos);
+    Brain.Screen.setCursor(5,20);
+   Brain.Screen.print(yPos);
+   Brain.Screen.setCursor(7,3);
+   Brain.Screen.print(L);
+   Brain.Screen.setCursor(7,20);
+   Brain.Screen.print(R);
+   Brain.Screen.setCursor(9,3);
+   Brain.Screen.print(headingAngle);
+           //reset delta
+        xPos = 0;
+        yPos = 0;
+
+         headingAngleDelta = 0;
+        if(testcurrentL==360){
+          testcurrentL = 0;
+        }
+        if(testcurrentL>360){
+          testcurrentL = testcurrentL-360;
+        }
+         if(testcurrentR==360){
+          testcurrentL = 0;
+        }
+        if(testcurrentR>360){
+          testcurrentL =  testcurrentL-360;
+        }
+        wait(50, msec);
+      } 
+ }
 void Point2Point(void) {
   printf("function is running\n");
   //variable declarations
@@ -224,22 +339,28 @@ RightValue = rightEncoder.position(degrees);
   front_r.stop(hold);
 }
 
+
 int main() {
   // Run the pre-autonomous function.
   pre_auton();
-    Competition.drivercontrol(usercontrol);
+    
+    
 
 //Point2Point();
   // Set up callbacks for autonomous and driver control periods.
   //Point2Point();
-
-
+if((testcurrentL>testcurrentR || testcurrentR>testcurrentL) && (testcurrentL-testcurrentR !=0 || testcurrentR-testcurrentL !=0) ){
+Competition.drivercontrol(TwoEncoderOdom);
+}
+else{
+Competition.drivercontrol(ThreeEncdoerOdom);
+}
   // Prevent main from exiting with an infinite loop.
   while (true) {
     wait(100, msec);
   }
 }
-
+if()
 void joyStickControl(void) {
   double first_val = Controller1.Axis3.position();
   double second_val = Controller1.Axis2.position();
